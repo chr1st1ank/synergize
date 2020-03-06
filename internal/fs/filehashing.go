@@ -6,13 +6,17 @@ import (
 	"hash"
 	"hash/adler32"
 	"io"
-	"strings"
+	"os"
 )
 
 func hashFile(path string, hasher hash.Hash) string {
-	input := strings.NewReader(path)
-	if _, err := io.Copy(hasher, input); err != nil {
-		return "Error"
+	file, err := os.Open(path)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	if _, err := io.Copy(hasher, file); err != nil {
+		panic(err)
 	}
 	return fmt.Sprintf("%x", hasher.Sum(nil))
 }
