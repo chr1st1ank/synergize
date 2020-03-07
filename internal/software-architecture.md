@@ -1,7 +1,7 @@
 ## Data Flow
 
 ```
-ScanFolderTree() -{FileInfo}-> TakeFileFingerprint() -{FileOnDiskInfo}->
+ScanTree() -{FileInfo}-> TakeFileFingerprint() -{FileOnDiskInfo}->
 
 -> PersistFileOnDiskInfo(add)
 -> SkipOrSynergizeFile() -{FileOnDiskInfo}-> PersistFileOnDiskInfo(remove)
@@ -20,7 +20,7 @@ ScanFolderTree() -{FileInfo}-> TakeFileFingerprint() -{FileOnDiskInfo}->
 - inodeID uint64
 - Address String
 - Fingerprint() String
-- FromFileInfo() InodeInfo
+- InodeInfoFromFileInfo() InodeInfo
 
 *FileOnDiskInfo*
 - FileInfo
