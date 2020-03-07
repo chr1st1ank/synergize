@@ -56,7 +56,7 @@ func (fi *fileInfoImp) Inode() uint64 {
 
 func (fi *fileInfoImp) Hash() string {
 	if len(fi.hash) == 0 {
-		fi.hash = Md5Sum(fi.Path())
+		fi.hash, _ = Md5Sum(fi.Path())
 	}
 	return fi.hash
 }

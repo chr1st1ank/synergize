@@ -9,22 +9,27 @@ import (
 	"os"
 )
 
-func hashFile(path string, hasher hash.Hash) string {
-	file, err := os.Open(path)
+// HashFunction is the type of a function which reads a file and calculates a checksum on it
+type HashFunction func(filePath string) (checksum string, err error)
+
+func hashFile(filePath string, hasher hash.Hash) (checksum string, err error) {
+	file, err := os.Open(filePath)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	defer file.Close()
 	if _, err := io.Copy(hasher, file); err != nil {
-		panic(err)
+		return "", err
 	}
-	return fmt.Sprintf("%x", hasher.Sum(nil))
+	return fmt.Sprintf("%x", hasher.Sum(nil)), nil
 }
 
-func Md5Sum(path string) string {
-	return hashFile(path, md5.New())
+// Md5Sum calculates and returns the md5 checksum for the file in the given path
+func Md5Sum(filePath string) (checksum string, err error) {
+	return hashFile(filePath, md5.New())
 }
 
-func Adler32Sum(path string) string {
-	return hashFile(path, adler32.New())
+// Adler32Sum calculates and returns the adler32 checksum for the file in the given path
+func Adler32Sum(filePath string) (checksum string, err error) {
+	return hashFile(filePath, adler32.New())
 }
