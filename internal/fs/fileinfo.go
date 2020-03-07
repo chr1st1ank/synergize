@@ -2,6 +2,7 @@ package fs
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"syscall"
 	"time"
@@ -62,11 +63,11 @@ func (fi *fileInfoImp) Inode() (uint64, error) {
 
 func (fi *fileInfoImp) Hash() (string, error) {
 	if len(fi.hash) == 0 {
-		hash, err := Md5Sum(fi.Path())
+		hash, err := Adler32Sum(fi.Path())
 		if err != nil {
 			return "", err
 		}
-		fi.hash = hash
+		fi.hash = fmt.Sprint(fi.Size(), "-", hash)
 	}
 	return fi.hash, nil
 }

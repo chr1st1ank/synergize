@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"fmt"
 	"os"
 	"syscall"
 	"testing"
@@ -36,7 +37,7 @@ func TestFileInfo(t *testing.T) {
 		t.Errorf("Unexpected result of Inode(): %v", inode)
 	}
 
-	if hash, _ := fi.Hash(); hash != knownFileMd5Sum {
+	if hash, _ := fi.Hash(); hash != fmt.Sprintf("%v-%v", stat.Size(), knownFileAdler32Sum) {
 		t.Errorf("Unexpected result of Hash(): %v", hash)
 	}
 }
