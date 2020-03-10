@@ -1,7 +1,7 @@
 package fs
 
 import (
-	"crypto/md5"
+	"crypto/sha1"
 	"fmt"
 	"hash"
 	"hash/adler32"
@@ -24,9 +24,9 @@ func hashFile(filePath string, hasher hash.Hash) (checksum string, err error) {
 	return fmt.Sprintf("%x", hasher.Sum(nil)), nil
 }
 
-// Md5Sum calculates and returns the md5 checksum for the file in the given path
-func Md5Sum(filePath string) (checksum string, err error) {
-	return hashFile(filePath, md5.New())
+// Sha1Sum calculates and returns the sha1 checksum for the file in the given path
+func Sha1Sum(filePath string) (checksum string, err error) {
+	return hashFile(filePath, sha1.New())
 }
 
 // Adler32Sum calculates and returns the adler32 checksum for the file in the given path

@@ -63,11 +63,15 @@ func (fi *fileInfoImp) Inode() (uint64, error) {
 
 func (fi *fileInfoImp) Hash() (string, error) {
 	if len(fi.hash) == 0 {
-		hash, err := Adler32Sum(fi.Path())
+		sha1, err := Sha1Sum(fi.Path())
 		if err != nil {
 			return "", err
 		}
-		fi.hash = fmt.Sprint(fi.Size(), "-", hash)
+		adler, err := Adler32Sum(fi.Path())
+		if err != nil {
+			return "", err
+		}
+		fi.hash = fmt.Sprint(fi.Size(), "-", sha1, "-", adler)
 	}
 	return fi.hash, nil
 }

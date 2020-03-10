@@ -4,8 +4,8 @@ import (
 	"testing"
 )
 
-const knownFileMd5Sum = "31d2a6aa73dcfa42d62da2a8d2dcefbd" // MD5 checksum for test/file_with_known_hash.txt
-const knownFileAdler32Sum = "e74a21c6"                     // Adler32 checksum for test/file_with_known_hash.txt
+const knownFileSha1Sum = "44bc03ad6d33f3ea06e37cb92ac9b1ee86961a3d" // Sha1 checksum for test/file_with_known_hash.txt
+const knownFileAdler32Sum = "e74a21c6"                              // Adler32 checksum for test/file_with_known_hash.txt
 
 // testHashFunction tries to hash the "file_with_known_hash.txt" test file and validated
 // the checksum. Afterwards it tries to hash a non existing file and expects an error.
@@ -25,12 +25,12 @@ func testHashFunction(function HashFunction, expectedHash string, t *testing.T) 
 	}
 }
 
-// TestMd5Sum tests the Md5Sum checksum function
-func TestMd5Sum(t *testing.T) {
-	testHashFunction(Md5Sum, knownFileMd5Sum, t)
+// TestSha1Sum tests the Sha1Sum checksum function
+func TestSha1Sum(t *testing.T) {
+	testHashFunction(Sha1Sum, knownFileSha1Sum, t)
 }
 
-// TestMd5Sum tests the Adler32 checksum function
+// TestSha1Sum tests the Adler32 checksum function
 func TestAdler32Sum(t *testing.T) {
 	testHashFunction(Adler32Sum, knownFileAdler32Sum, t)
 }
