@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// FileInfo groups information about a certain file
 type FileInfo interface {
 	Name() string
 	Size() int64
@@ -15,42 +16,30 @@ type FileInfo interface {
 	Path() string
 	FileSystem() string
 	Inode() (uint64, error)
-	Hash() (string, error)
+	Fingerprint() (string, error) // Fingerprint of the files contents. Files with the same fingerpint hold the same data.
 }
 
 type fileInfoImp struct {
 	osFileInfo os.FileInfo
-	// sys        syscall.Stat_t
 	path       string
 	filesystem string
 	inode      uint64
-	hash       string
 }
 
-func (fs *fileInfoImp) Name() string       { return fs.osFileInfo.Name() }
-func (fs *fileInfoImp) Size() int64        { return fs.osFileInfo.Size() }
-func (fs *fileInfoImp) Mode() os.FileMode  { return fs.osFileInfo.Mode() }
-func (fs *fileInfoImp) ModTime() time.Time { return fs.osFileInfo.ModTime() }
+func (fi *fileInfoImp) Name() string       { return fi.osFileInfo.Name() }
+func (fi *fileInfoImp) Size() int64        { return fi.osFileInfo.Size() }
+func (fi *fileInfoImp) Mode() os.FileMode  { return fi.osFileInfo.Mode() }
+func (fi *fileInfoImp) Path() string       { return fi.path }
+func (fi *fileInfoImp) FileSystem() string { return fi.filesystem }
+func (fi *fileInfoImp) ModTime() time.Time { return fi.osFileInfo.ModTime() }
+func (fi *fileInfoImp) IsDir() bool        { return fi.Mode().IsDir() }
 
-// func (fs *fileInfoImp) Sys() interface{}   { return &fs.osFileInfo.sys }
-
+// NewFileInfo creates a new FileInfo object for the file at a given path
 func NewFileInfo(fi os.FileInfo, path string) FileInfo {
 	f := new(fileInfoImp)
 	f.osFileInfo = fi
 	f.path = path
 	return f
-}
-
-func (fi *fileInfoImp) IsDir() bool {
-	return fi.Mode().IsDir()
-}
-
-func (fi *fileInfoImp) Path() string {
-	return fi.path
-}
-
-func (fi *fileInfoImp) FileSystem() string {
-	return fi.filesystem
 }
 
 func (fi *fileInfoImp) Inode() (uint64, error) {
@@ -61,17 +50,14 @@ func (fi *fileInfoImp) Inode() (uint64, error) {
 	return stat.Ino, nil
 }
 
-func (fi *fileInfoImp) Hash() (string, error) {
-	if len(fi.hash) == 0 {
-		sha1, err := Sha1Sum(fi.Path())
-		if err != nil {
-			return "", err
-		}
-		adler, err := Adler32Sum(fi.Path())
-		if err != nil {
-			return "", err
-		}
-		fi.hash = fmt.Sprint(fi.Size(), "-", sha1, "-", adler)
+func (fi *fileInfoImp) Fingerprint() (string, error) {
+	sha1, err := Sha1Sum(fi.Path())
+	if err != nil {
+		return "", err
 	}
-	return fi.hash, nil
+	adler, err := Adler32Sum(fi.Path())
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprint(fi.Size(), "-", sha1, "-", adler), nil
 }

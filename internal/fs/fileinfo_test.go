@@ -37,7 +37,7 @@ func TestFileInfo(t *testing.T) {
 		t.Errorf("Unexpected result of Inode(): %v", inode)
 	}
 
-	if hash, _ := fi.Hash(); hash != fmt.Sprintf("%v-%v-%v", stat.Size(), knownFileSha1Sum, knownFileAdler32Sum) {
+	if hash, _ := fi.Fingerprint(); hash != fmt.Sprintf("%v-%v-%v", stat.Size(), knownFileSha1Sum, knownFileAdler32Sum) {
 		t.Errorf("Unexpected result of Hash(): %v", hash)
 	}
 }

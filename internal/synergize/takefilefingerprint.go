@@ -5,18 +5,16 @@ import (
 	"github.com/chr1st1ank/synergize/internal/fs"
 )
 
-func TakeFileFingerprint(fi <-chan fs.FileInfo, bufferSize int) <-chan fs.FileOnDiskInfo {
-	// inodeTable := make(map[string]fs.InodeInfo, 100)
+func TakeFingerprints(fi <-chan fs.FileInfo, bufferSize int) <-chan fs.FileOnDiskInfo {
+	knownFingerprints := make(map[string]string, 100)
 	out := make(chan fs.FileOnDiskInfo, bufferSize)
 	go func() {
 		for fileInfo := range fi {
-			inodeInfo, err := fs.InodeInfoFromFileInfo(fileInfo)
+			fileOnDiskInfo, err := fs.GenerateFileOnDiskInfo(fileInfo, knownFingerprints)
 			if err != nil {
-				fmt.Println("Skipping because inode inaccessible: ", fileInfo.Path())
-			}
-			out <- fs.FileOnDiskInfo{
-				FileInfo:  fileInfo,
-				InodeInfo: inodeInfo,
+				fmt.Println("Skipping ", fileInfo.Path(), " because ", err.Error())
+			} else {
+				out <- *fileOnDiskInfo
 			}
 		}
 		close(out)
